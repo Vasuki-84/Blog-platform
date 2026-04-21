@@ -1,14 +1,16 @@
 import connectMongo from "@/utils/connectMongo";
 import PostModel from "@/models/POSTmodel";
 
-export async function GET() {
+export async function GET(request, { params }) {
   try {
     await connectMongo();
 
-    const postData = await PostModel.find({});
+    const { id } = await params;
+
+    const postData = await PostModel.findById(id);
 
     return Response.json(postData);
-  } catch (error:any) {
+  } catch (error) {
     return Response.json(
       { message: error.message },
       { status: 500 }
