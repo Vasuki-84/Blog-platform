@@ -1,39 +1,28 @@
-"use client";
+import Post from "@/Components/Post";
 
-import { use, useEffect, useState } from "react";
-
-type PostType = {
-  title: string;
-  description: string;
-  image: string;
-  created_at: string;
-};
-
-export default function Post({
+export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = use(params);
+  const { id } = await params;
 
-  const [post, setPost] = useState<PostType | null>(null);
+  const post = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/post/${id}`
+  ).then((res) => res.json());
 
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/post/${id}`)
-      .then((res) => res.json())
-      .then((res) => setPost(res));
-  }, [id]);
+  return {
+    title: post.title,
+    description: post.description,
+  };
+}
 
-  return (
-    <div>
-      {post && (
-        <main className="container mx-auto px-4 py-6">
-          <h2 className="text-4xl font-bold mb-4">{post.title}</h2>
-          <p className="text-gray-500">{post.created_at}</p>
-          <img src={post.image} alt="Post Image" className="my-4" />
-          <p>{post.description}</p>
-        </main>
-      )}
-    </div>
-  );
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+
+  return <Post params={resolvedParams} />;
 }
