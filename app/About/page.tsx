@@ -1,3 +1,9 @@
+
+export const metadata={
+    title:"About us page",
+    description:"describes the blog site"
+}
+
 export default function About(){
     return <div>
         <main className="container mx-auto px-4 py-6">
